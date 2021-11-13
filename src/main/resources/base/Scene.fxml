@@ -15,7 +15,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="850.0" stylesheets="@StyleSheet.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="base.MainWindowController">
    <children>
-      <TableView layoutX="14.0" layoutY="35.0" prefHeight="375.0" prefWidth="820.0" stylesheets="@StyleSheet.css" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="85.0">
+      <TableView layoutX="14.0" layoutY="35.0" prefHeight="375.0" prefWidth="820.0" stylesheets="@StyleSheet.css" AnchorPane.bottomAnchor="135.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="85.0">
         <columns>
           <TableColumn prefWidth="500.0" text="Name" />
           <TableColumn prefWidth="200.0" text="Serial Code" />
@@ -37,12 +37,12 @@
             <Image url="@media/Cata-logHeader.png" />
          </image>
       </ImageView>
-      <Button layoutX="16.0" layoutY="486.0" mnemonicParsing="false" text="Select" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="486.0" />
-      <Button layoutX="133.0" layoutY="486.0" mnemonicParsing="false" text="Add" AnchorPane.leftAnchor="124.0" AnchorPane.topAnchor="486.0" />
-      <Button layoutX="81.0" layoutY="486.0" mnemonicParsing="false" text="Edit" AnchorPane.leftAnchor="76.0" AnchorPane.topAnchor="486.0" />
-      <Button layoutX="765.0" layoutY="476.0" mnemonicParsing="false" text="Remove" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="476.0" />
-      <Button layoutX="765.0" layoutY="513.0" mnemonicParsing="false" prefWidth="70.0" text="Clear All" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="512.0" />
-      <TextField layoutX="14.0" layoutY="525.0" promptText="Item Name" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="525.0">
+      <Button layoutX="16.0" layoutY="486.0" mnemonicParsing="false" text="Select" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="14.0" />
+      <Button layoutX="133.0" layoutY="486.0" mnemonicParsing="false" text="Add" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="124.0" />
+      <Button layoutX="81.0" layoutY="486.0" mnemonicParsing="false" text="Edit" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="76.0" />
+      <Button layoutX="765.0" layoutY="476.0" mnemonicParsing="false" text="Remove" AnchorPane.bottomAnchor="94.0" AnchorPane.rightAnchor="14.0" />
+      <Button layoutX="765.0" layoutY="509.0" mnemonicParsing="false" prefWidth="70.0" text="Clear All" AnchorPane.bottomAnchor="58.0" AnchorPane.rightAnchor="14.0" />
+      <TextField layoutX="14.0" layoutY="525.0" promptText="Item Name" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="14.0">
          <font>
             <Font name="System Italic" size="12.0" />
          </font>
@@ -52,7 +52,7 @@
             <Font name="System Italic" size="10.0" />
          </font>
       </TextField>
-      <TextField layoutX="332.0" layoutY="525.0" promptText="Value (USD)" AnchorPane.leftAnchor="330.0" AnchorPane.topAnchor="525.0">
+      <TextField layoutX="332.0" layoutY="525.0" promptText="Value (USD)" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="330.0">
          <font>
             <Font name="System Italic" size="12.0" />
          </font>
@@ -67,7 +67,7 @@
             <Font name="Arial Italic" size="10.0" />
          </font>
       </Label>
-      <TextField layoutX="173.0" layoutY="525.0" promptText="Serial Code" AnchorPane.leftAnchor="172.0" AnchorPane.topAnchor="525.0">
+      <TextField layoutX="173.0" layoutY="525.0" promptText="Serial Code" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="172.0">
          <font>
             <Font name="System Italic" size="12.0" />
          </font>
