@@ -1,10 +1,15 @@
+/*
+ *  UCF COP3330 Fall 2021 Application Assignment 2 Solution
+ *  Copyright 2021 Rylan Simpson
+ */
+
 package base;
 
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import java.util.Random;
 
-class Item {
+public class Item {
     Random rand = new Random();
 
     //Attributes

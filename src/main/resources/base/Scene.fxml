@@ -17,9 +17,9 @@
    <children>
       <TableView fx:id="itemTable" layoutX="14.0" layoutY="35.0" prefHeight="375.0" prefWidth="820.0" stylesheets="@StyleSheet.css" AnchorPane.bottomAnchor="135.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="85.0">
         <columns>
-          <TableColumn prefWidth="500.0" text="Name" />
-          <TableColumn prefWidth="200.0" text="Serial Code" />
-            <TableColumn prefWidth="131.199951171875" text="Value" />
+          <TableColumn fx:id="nameColumn" prefWidth="500.0" text="Name" />
+          <TableColumn fx:id="codeColumn" prefWidth="200.0" text="Serial Code" />
+            <TableColumn fx:id="valueColumn" prefWidth="119.5" text="Value" />
         </columns>
       </TableView>
       <MenuBar layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -49,17 +49,17 @@
             <Image url="@media/Cata-logHeader.png" />
          </image>
       </ImageView>
-      <Button fx:id="selectButton" layoutX="16.0" layoutY="486.0" mnemonicParsing="false" text="Select" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="14.0" />
-      <Button fx:id="addButton" layoutX="133.0" layoutY="486.0" mnemonicParsing="false" text="Add" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="124.0" />
-      <Button fx:id="editButton" layoutX="81.0" layoutY="486.0" mnemonicParsing="false" text="Edit" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="76.0" />
-      <Button fx:id="removeButton" layoutX="765.0" layoutY="476.0" mnemonicParsing="false" text="Remove" AnchorPane.bottomAnchor="94.0" AnchorPane.rightAnchor="14.0" />
-      <Button fx:id="clearAllButton" layoutX="765.0" layoutY="509.0" mnemonicParsing="false" prefWidth="70.0" text="Clear All" AnchorPane.bottomAnchor="58.0" AnchorPane.rightAnchor="14.0" />
+      <Button fx:id="selectButton" layoutX="16.0" layoutY="486.0" mnemonicParsing="false" onAction="#selectItemFromList" text="Select" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="14.0" />
+      <Button fx:id="addButton" layoutX="133.0" layoutY="486.0" mnemonicParsing="false" onAction="#addItemToList" text="Add" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="124.0" />
+      <Button fx:id="editButton" layoutX="81.0" layoutY="486.0" mnemonicParsing="false" onAction="#editItemFromList" text="Edit" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="76.0" />
+      <Button fx:id="removeButton" layoutX="765.0" layoutY="476.0" mnemonicParsing="false" onAction="#deleteItemFromList" text="Remove" AnchorPane.bottomAnchor="94.0" AnchorPane.rightAnchor="14.0" />
+      <Button fx:id="clearAllButton" layoutX="765.0" layoutY="509.0" mnemonicParsing="false" onAction="#clearList" prefHeight="31.0" prefWidth="86.0" text="Clear All" AnchorPane.bottomAnchor="58.0" AnchorPane.rightAnchor="14.0" />
       <TextField fx:id="itemNameField" layoutX="14.0" layoutY="525.0" promptText="Item Name" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="14.0">
          <font>
             <Font name="System Italic" size="12.0" />
          </font>
       </TextField>
-      <TextField fx:id="itemSearchField" alignment="CENTER" layoutX="575.0" layoutY="49.0" prefHeight="22.0" prefWidth="126.0" promptText="Search By Item Name" AnchorPane.rightAnchor="148.0" AnchorPane.topAnchor="50.0">
+      <TextField fx:id="itemSearchField" alignment="CENTER" layoutX="575.0" layoutY="49.0" prefHeight="22.0" prefWidth="150.0" promptText="Search By Item Name or Code" AnchorPane.rightAnchor="148.0" AnchorPane.topAnchor="50.0">
          <font>
             <Font name="System Italic" size="10.0" />
          </font>
@@ -84,27 +84,37 @@
             <Font name="System Italic" size="12.0" />
          </font>
       </TextField>
-      <Button fx:id="searchButton" layoutX="706.0" layoutY="49.0" mnemonicParsing="false" text="Search" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="50.0">
+      <Button fx:id="searchButton" layoutX="706.0" layoutY="49.0" mnemonicParsing="false" onAction="#searchForItem" text="Search" AnchorPane.rightAnchor="82.0" AnchorPane.topAnchor="50.0">
          <font>
             <Font size="10.0" />
          </font>
       </Button>
-      <Button fx:id="resetButton" layoutX="773.0" layoutY="50.0" mnemonicParsing="false" text="Reset" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="50.0">
+      <Button fx:id="resetButton" layoutX="773.0" layoutY="50.0" mnemonicParsing="false" onAction="#resetSearch" text="Reset" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="50.0">
          <font>
             <Font size="10.0" />
          </font>
       </Button>
-      <Label layoutX="14.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
+      <Label fx:id="nameErrorMsg" layoutX="14.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
-      <Label layoutX="173.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
+      <Label fx:id="codeErrorMsg" layoutX="173.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
          <font>
             <Font size="10.0" />
          </font>
       </Label>
-      <Label layoutX="332.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
+      <Label fx:id="valueErrorMsg" layoutX="332.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <Label fx:id="selectErrorMsg" layoutX="177.0" layoutY="481.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <Label fx:id="searchErrorMsg" layoutX="396.0" layoutY="52.0" prefHeight="27.0" prefWidth="150.0" text=" " textFill="#ff4e4e">
          <font>
             <Font size="10.0" />
          </font>

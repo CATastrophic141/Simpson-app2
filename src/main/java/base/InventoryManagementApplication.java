@@ -28,6 +28,7 @@ public class InventoryManagementApplication extends javafx.application.Applicati
         }
         catch (Exception e){
             System.out.print("Could not start application");
+            e.printStackTrace();
         }
     }
 
