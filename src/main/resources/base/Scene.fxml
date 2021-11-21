@@ -26,7 +26,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <Menu mnemonicParsing="false" text="Unspecified Menu">
+                  <Menu mnemonicParsing="false" text="Upload">
                     <items>
                       <MenuItem fx:id="UploadTSVButton" mnemonicParsing="false" onAction="#uploadFileAsTSV" text="Upload (TSV)" />
                         <MenuItem fx:id="uploadHTMLButton" mnemonicParsing="false" onAction="#uploadFileAsHTML" text="Upload (HTML)" />
@@ -104,7 +104,7 @@
             <Font size="10.0" />
          </font>
       </Label>
-      <Label fx:id="valueErrorMsg" layoutX="332.0" layoutY="557.0" prefHeight="39.0" prefWidth="150.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
+      <Label fx:id="valueErrorMsg" layoutX="332.0" layoutY="557.0" prefHeight="39.0" prefWidth="250.0" text=" " textAlignment="CENTER" textFill="#ff4e4e" wrapText="true">
          <font>
             <Font size="10.0" />
          </font>

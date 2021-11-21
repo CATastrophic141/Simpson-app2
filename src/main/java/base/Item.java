@@ -5,35 +5,34 @@
 
 package base;
 
-import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import java.util.Random;
 
 public class Item {
-    Random rand = new Random();
 
     //Attributes
     private final int itemID;
     private final SimpleStringProperty itemName;
     private final SimpleStringProperty itemCode;
-    private final SimpleFloatProperty itemValue;
+    private final SimpleStringProperty itemValue;
 
     //Constructors methods
-    public Item(String name, String code, float value) {
+    public Item(String name, String code, String value) {
         //Set instance details to passed arguments
         itemName = new SimpleStringProperty(name);
         itemCode = new SimpleStringProperty(code);
-        itemValue = new SimpleFloatProperty(value);
+        itemValue = new SimpleStringProperty(value);
         //Generate a random ID
+        Random rand = new Random();
         itemID = rand.nextInt();
     }
 
-    public Item(String name, String code, float value, int id) {
+    public Item(String name, String code, String value, int id) {
         //Set instance details to passed arguments
         //Set instance details to passed arguments
         itemName = new SimpleStringProperty(name);
         itemCode = new SimpleStringProperty(code);
-        itemValue = new SimpleFloatProperty(value);
+        itemValue = new SimpleStringProperty(value);
         //Set a random ID
         itemID = id;
     }
@@ -48,7 +47,7 @@ public class Item {
         return itemCode.get();
     }
 
-    public float getItemValue(){
+    public String getItemValue(){
         return itemValue.get();
     }
 

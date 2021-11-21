@@ -12,15 +12,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
-
-import java.io.File;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+import org.json.JSONObject;
 
 public class MainWindowController implements Initializable {
-    private static final String VALUE_ERROR_MSG = "Please enter a valid value for the item (0 or greater)";
 
     @FXML
     private TextField itemCodeField;
@@ -88,12 +85,11 @@ public class MainWindowController implements Initializable {
         try {
             //Get file path from chooser
             FileChooser fileChooser = new FileChooser();
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Tab-Separated File", ".txt"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Tab-Separated File", ".tsv"));
             File file = fileChooser.showSaveDialog(null);
             //Call TSV file generation method
             if (file != null) {
                 filePath = file.getPath();
-                System.out.print(filePath);
                 generateTSVFile(filePath);
             }
         }
@@ -114,7 +110,6 @@ public class MainWindowController implements Initializable {
             //Call HTML file generation method
             if (file != null) {
                 filePath = file.getPath();
-                System.out.print(filePath);
                 generateHTMLFile(filePath);
             }
         }
@@ -135,34 +130,80 @@ public class MainWindowController implements Initializable {
             //Call JSON file generation method
             if (file != null) {
                 filePath = file.getPath();
-                System.out.print(filePath);
                 generateJSONFile(filePath);
             }
         }
+        //Broad exception catching
         catch (Exception e){
-            System.out.printf("Failed to save JSON file%n");
+            System.out.printf("------Failed to open JSON file for saving------%n");
+            e.printStackTrace();
         }
     }
 
     private void generateTSVFile(String filePath) {
         //Setup print path to generated file
-        //Specify number of items in the list
+        File fileOut = new File(filePath);
+        Formatter saveStream;
+        try {
+            saveStream = new Formatter(new FileOutputStream(fileOut));
+        } catch (FileNotFoundException e) {
+            System.out.printf("------Failed to open TSV save  stream------%n");
+            return;
+        }
         //For every item within the list, print out the details in tab-separated format
-        //Set print back to console
+        for (Item item : allItems) {
+            saveStream.format("%s\t%s\t%s\t%d%n",
+                    item.getItemName(), item.getItemCode(), item.getItemValue(), item.getItemID());
+        }
+        saveStream.close();
     }
 
     private void generateHTMLFile(String filePath) {
         //Setup print path to generated file
-        //Specify number of items in the list
+        File fileOut = new File(filePath);
+        Formatter saveStream;
+        try {
+            saveStream = new Formatter(new FileOutputStream(fileOut));
+        } catch (FileNotFoundException e) {
+            System.out.printf("------Failed to open HTML save stream------%n");
+            return;
+        }
+        String header = "<html>\n\t<body>\n<style>table{border-spacing: 15px;}</style>\n\t\t<pre><table>\n\t\t\t<th><u>Name</u></th><th><u>Code</u></th><th><u>Value</u></th><br><th><u>ID</u></th><br>\n";
+        //Generate heading
+        saveStream.format(header);
         //For every item within the list, print out the details in a html-group format
             // >> Save group in tabular format
-        //Set print back to console
+        for (Item item : allItems) {
+           saveStream.format("<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr><br>%n"
+                   ,item.getItemName(),item.getItemCode(),item.getItemValue(),item.getItemID());
+        }
+        saveStream.format("%n\t\t\t</table>%n\t\t</pre>%n\t</body>%n</html>%n");
+        saveStream.close();
     }
 
     private void generateJSONFile(String filePath) {
         //Setup print path to generated file
-        //For every item within the list, print a JSON object, details included
-        //Set print back to console
+        try (FileWriter saveStream = new FileWriter(filePath)) {
+            //For every item within the list, print a JSON object, details included
+            for (Item item : allItems) {
+                JSONObject jObj = new JSONObject();
+                String name = item.getItemName();
+                String code = item.getItemCode();
+                String value = item.getItemValue();
+                int id = item.getItemID();
+                jObj.put("Name", name);
+                jObj.put("Code", code);
+                jObj.put("Value", value);
+                jObj.put("ID", id);
+                saveStream.write(jObj.toString());
+                saveStream.write("\n");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.printf("------Failed to open JSON save stream------%n");
+        } catch (Exception e) {
+            System.out.printf("------JSON save stream failure------%n");
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -176,7 +217,6 @@ public class MainWindowController implements Initializable {
             //Call TSV file parsing method
             if (file != null) {
                 filePath = file.getPath();
-                System.out.print(filePath);
                 parseTSVFile(filePath);
             }
         }
@@ -197,7 +237,6 @@ public class MainWindowController implements Initializable {
             //Call HTML file parsing method
             if (file != null) {
                 filePath = file.getPath();
-                System.out.print(filePath);
                 parseHTMLFile(filePath);
             }
         }
@@ -218,7 +257,6 @@ public class MainWindowController implements Initializable {
             //Call JSON file parsing method
             if (file != null) {
                 filePath = file.getPath();
-                System.out.print(filePath);
                 parseJSONFile(filePath);
             }
         }
@@ -230,13 +268,32 @@ public class MainWindowController implements Initializable {
 
     private void parseTSVFile(String filePath) {
         //Clear stored lists
+        allItems.clear();
+        viewedItems.clear();
+        usedCodes.clear();
         //Access file for parsing
-            //Get the number of items to parse
-            //Initialize storage variables
-            //For the number of items
-                //Save each next string/double to variables
+        try (Scanner fileIn = new Scanner(new FileInputStream(filePath))) {
+            String readLine;
+            String[] data;
+            int id;
+            //While the file has lines
+            while (fileIn.hasNextLine()) {
+                //Read the line
+                readLine = fileIn.nextLine();
+                //Split data by \t
+                data = readLine.split("\t");
                 //Create item with stored data
+                id = Integer.parseInt(data[3]);
+                Item newItem = new Item(data[0], data[1], data[2], id);
                 //Add item to lists
+                allItems.add(newItem);
+                viewedItems.add(newItem);
+                usedCodes.add(data[1]);
+            }
+        } catch (FileNotFoundException e) {
+            //Print error message
+            System.out.printf("%nError parsing TSV file%n");
+        }
         //Refresh tableview
     }
 
@@ -276,10 +333,11 @@ public class MainWindowController implements Initializable {
         return !code.matches(codeRegex);
     }
 
-    private boolean invalidateItemValue(float value) {
-        //Return boolean result resulting from check is value is greater than or equal to 0
-            //Returns reverse boolean, checks if value is negative
-        return value < 0;
+    private boolean invalidateItemValue(String value) {
+        //Define value regex
+        String valueRegex = "^([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$";
+        //Check if value does not match regex, return result
+        return !value.matches(valueRegex);
     }
 
     private void resetInformationFields() {
@@ -331,7 +389,7 @@ public class MainWindowController implements Initializable {
         //Get information from selected row
         String name = selectedItem.getItemName();
         String code = selectedItem.getItemCode();
-        float value = selectedItem.getItemValue();
+        String value = selectedItem.getItemValue();
         String valueString = String.valueOf(value);
         //Set information boxes to display relevant info
         itemNameField.setText(name);
@@ -344,7 +402,7 @@ public class MainWindowController implements Initializable {
         //Initialize storage variables
         String name = "";
         String code = "";
-        float value = -1;
+        String value = "";
         int errorFlag = 0;
 
         //Save name if it is valid
@@ -363,23 +421,18 @@ public class MainWindowController implements Initializable {
         }
         else if (usedCodes.contains(itemCodeField.getText())) {
             //If code exists, change corresponding label to error message
-            codeErrorMsg.setText("Please enter a unique item code");
+            codeErrorMsg.setText("Please enter a unique item code. Consider using \"Edit\"");
             errorFlag = 1;
         } else {
             code = itemCodeField.getText();
         }
         //Save value if it is valid
-        try {
-            if (itemValueField.getText().length() == 0 || invalidateItemValue(Float.parseFloat(itemValueField.getText()))) {
-                //If not, change corresponding label to error message
-                valueErrorMsg.setText(VALUE_ERROR_MSG);
-                errorFlag = 1;
-            } else {
-                value = Float.parseFloat(itemValueField.getText());
-            }
-        }
-        catch (Exception e){
-            valueErrorMsg.setText(VALUE_ERROR_MSG);
+        if (invalidateItemValue(itemValueField.getText())) {
+            //If not, change corresponding label to error message
+            valueErrorMsg.setText("Please enter a valid monetary value for the item (Greater than or equal to 0. Do not include \"$\")");
+            errorFlag = 1;
+        } else {
+            value = itemValueField.getText();
         }
 
         //If any value storage attempts fail, end function
@@ -415,9 +468,9 @@ public class MainWindowController implements Initializable {
         int itemIDIndex = getIndexOfID(oldItem.getItemID());
         int codeIndex = getIndexOfCode(oldItem.getItemCode());
         //Initialize storage variables
-        String name = "N/A";
-        String code = "N/A";
-        float value = 0;
+        String name = "";
+        String code = "";
+        String value = "";
         int id;
         int errorFlag = 0;
         //Save name if it is valid
@@ -434,7 +487,8 @@ public class MainWindowController implements Initializable {
             codeErrorMsg.setText("Please enter a valid and unique code for the item (A-XXX-XXX-XXX)");
             errorFlag = 1;
         }
-        else if (usedCodes.contains(itemCodeField.getText())) {
+        //Check if code is not unique and is not the same as the last code
+        else if (usedCodes.contains(itemCodeField.getText()) && !usedCodes.get(codeIndex).matches(itemCodeField.getText())) {
             //If code exists, change corresponding label to error message
             codeErrorMsg.setText("Please enter a unique item code");
             errorFlag = 1;
@@ -442,17 +496,12 @@ public class MainWindowController implements Initializable {
             code = itemCodeField.getText();
         }
         //Save value if it is valid
-        try {
-            if (invalidateItemValue(Float.parseFloat(itemValueField.getText()))) {
-                //If not, change corresponding label to error message
-                valueErrorMsg.setText(VALUE_ERROR_MSG);
-                errorFlag = 1;
-            } else {
-                value = Float.parseFloat(itemValueField.getText());
-            }
-        }
-        catch (Exception e) {
-            valueErrorMsg.setText(VALUE_ERROR_MSG);
+        if (invalidateItemValue(itemValueField.getText())) {
+            //If not, change corresponding label to error message
+            valueErrorMsg.setText("Please enter a valid monetary value for the item (Greater than or equal to $0)");
+            errorFlag = 1;
+        } else {
+            value = itemValueField.getText();
         }
 
         //If any value storage attempts fail, end function
