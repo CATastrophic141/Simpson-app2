@@ -17,9 +17,9 @@
    <children>
       <TableView fx:id="itemTable" layoutX="14.0" layoutY="35.0" prefHeight="375.0" prefWidth="820.0" stylesheets="@StyleSheet.css" AnchorPane.bottomAnchor="135.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="85.0">
         <columns>
-          <TableColumn fx:id="nameColumn" prefWidth="500.0" text="Name" />
-          <TableColumn fx:id="codeColumn" prefWidth="200.0" text="Serial Code" />
-            <TableColumn fx:id="valueColumn" prefWidth="119.5" text="Value" />
+          <TableColumn fx:id="nameColumn" prefWidth="425.0" text="Name" />
+          <TableColumn fx:id="codeColumn" prefWidth="245.0" text="Serial Code" />
+            <TableColumn fx:id="valueColumn" prefWidth="144.800048828125" text="Value (USD)" />
         </columns>
       </TableView>
       <MenuBar layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">

@@ -85,7 +85,7 @@ public class MainWindowController implements Initializable {
         try {
             //Get file path from chooser
             FileChooser fileChooser = new FileChooser();
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Tab-Separated File", ".tsv"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text TSV File", ".txt"));
             File file = fileChooser.showSaveDialog(null);
             //Call TSV file generation method
             if (file != null) {
@@ -168,7 +168,7 @@ public class MainWindowController implements Initializable {
             System.out.printf("------Failed to open HTML save stream------%n");
             return;
         }
-        String header = "<html>\n\t<body>\n<style>table{border-spacing: 15px;}</style>\n\t\t<pre><table>\n\t\t\t<th><u>Name</u></th><th><u>Code</u></th><th><u>Value</u></th><br><th><u>ID</u></th><br>\n";
+        String header = "<html>\n\t<body>\n<style>table{border-spacing: 15px;}</style>\n\t\t<pre><table>\n<th><u>Name</u></th><th><u>Code</u></th><th><u>Value</u></th><th><u>ID</u></th><br></tr>\n";
         //Generate heading
         saveStream.format(header);
         //For every item within the list, print out the details in a html-group format
@@ -177,7 +177,7 @@ public class MainWindowController implements Initializable {
            saveStream.format("<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td></tr><br>%n"
                    ,item.getItemName(),item.getItemCode(),item.getItemValue(),item.getItemID());
         }
-        saveStream.format("%n\t\t\t</table>%n\t\t</pre>%n\t</body>%n</html>%n");
+        saveStream.format("\t\t\t</table>%n\t\t</pre>%n\t</body>%n</html>%n");
         saveStream.close();
     }
 
@@ -202,7 +202,6 @@ public class MainWindowController implements Initializable {
             System.out.printf("------Failed to open JSON save stream------%n");
         } catch (Exception e) {
             System.out.printf("------JSON save stream failure------%n");
-            e.printStackTrace();
         }
     }
 
@@ -295,30 +294,89 @@ public class MainWindowController implements Initializable {
             System.out.printf("%nError parsing TSV file%n");
         }
         //Refresh tableview
+        itemTable.refresh();
     }
 
-    /** RESEARCH HTML PARSING **/
     private void parseHTMLFile(String filePath) {
         //Clear stored lists
+        allItems.clear();
+        viewedItems.clear();
+        usedCodes.clear();
         //Access file for parsing
-            //Get the number of items to parse
-            //Initialize storage variables
-            //For the number of items
-                //Save each next string/double to variables
+        try (Scanner fileIn = new Scanner(new FileInputStream(filePath))) {
+            StringBuilder fileString = new StringBuilder();
+            //While the file has a next input
+            while (fileIn.hasNextLine()) {
+                //Append the line to
+                fileString.append(fileIn.nextLine());
+            }
+            //Take the file as a string
+            String[] fileStringArr = fileString.toString().split("</tr>", Integer.MAX_VALUE);
+            ArrayList<String> fileDataList = new ArrayList<>(Arrays.asList(fileStringArr));
+            //Remove the beginning and ending tags
+            fileDataList.remove(0);
+            fileDataList.remove(fileDataList.size()-1);
+            //For the remaining array strings
+            for (String strings : fileDataList) {
+                //Separate the line as each of the four data pieces
+                String[] data = strings.split("</td>", 4);
+                for (int i = 0; i<4; i++) {
+                    //Remove table tags
+                    data[i] = data[i].replace("<tr>", "");
+                    data[i] = data[i].replace("</tr>", "");
+                    data[i] = data[i].replace("<td>", "");
+                    data[i] = data[i].replace("</td>", "");
+                }
+                //Remove html new line tag
+                data[0] = data[0].replace("<br>", "");
+
                 //Create item with stored data
+                Item newItem = new Item(data[0], data[1], data[2], Integer.parseInt(data[3]));
                 //Add item to lists
+                allItems.add(newItem);
+                viewedItems.add(newItem);
+                usedCodes.add(data[1]);
+            }
+        } catch (FileNotFoundException e) {
+            //Print error message
+            System.out.printf("%nError reading HTML file%n");
+        } catch (Exception e) {
+            //Print error message
+            System.out.printf("%nError parsing HTML file%n");
+            e.printStackTrace();
+        }
         //Refresh tableview
+        itemTable.refresh();
     }
 
     private void parseJSONFile(String filePath) {
         //Clear stored lists
+        allItems.clear();
+        viewedItems.clear();
+        usedCodes.clear();
         //Access file for parsing
+        try (Scanner fileIn = new Scanner(new FileInputStream(filePath))) {
             //While a next JSON object exists
-                //Initialize storage variables
+            while (fileIn.hasNextLine()) {
                 //Get each detail from JSON object
+                JSONObject jObj = new JSONObject(fileIn.nextLine());
+                String name = jObj.getString("Name");
+                String code = jObj.getString("Code");
+                String val = jObj.getString("Value");
+                int id = jObj.getInt("ID");
                 //Create item with stored data
+                Item newItem = new Item(name, code, val, id);
                 //Add item to lists
+                allItems.add(newItem);
+                viewedItems.add(newItem);
+                usedCodes.add(code);
+            }
+        } catch (FileNotFoundException e) {
+            //Print error message
+            System.out.printf("%nError parsing JSON file%n");
+        }
         //Refresh tableview
+        itemTable.refresh();
     }
 
     private boolean invalidateItemName(int nameLength) {
