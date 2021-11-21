@@ -630,13 +630,13 @@ public class MainWindowController implements Initializable {
         viewedItems.clear();
         //Get search string
         String searchText = itemSearchField.getText();
-        //For each item in the total list, check if a name or code matches the string
+        //For each item in the total list, check if a name or code matches the string and does not already exist
         //If so, add item to the observable list
         for (Item item : allItems) {
-            if (item.getItemName().contains(searchText)) {
+            if (item.getItemName().toLowerCase(Locale.ROOT).contains(searchText.toLowerCase(Locale.ROOT)) && !viewedItems.contains(item)) {
                 viewedItems.add(item);
             }
-            if (item.getItemCode().contains(searchText)) {
+            if (item.getItemCode().toLowerCase(Locale.ROOT).contains(searchText.toLowerCase(Locale.ROOT)) && !viewedItems.contains(item)) {
                 viewedItems.add(item);
             }
         }
