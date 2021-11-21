@@ -307,7 +307,7 @@ public class MainWindowController implements Initializable {
             StringBuilder fileString = new StringBuilder();
             //While the file has a next input
             while (fileIn.hasNextLine()) {
-                //Append the line to
+                //Add line to file
                 fileString.append(fileIn.nextLine());
             }
             //Take the file as a string
@@ -420,7 +420,7 @@ public class MainWindowController implements Initializable {
         //Return invalid counter if item is not found
         return -1;
     }
-    private int getIndexOfCode(String code){
+    private int getIndexOfCode(String code) {
         //Loop through items and retrieve the index of the matching code
         for(int i = 0; i < usedCodes.size(); i++) {
             if(usedCodes.get(i).matches(code)){
@@ -619,7 +619,7 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    void searchForItem() {
+    private void searchForItem() {
         //Cancel search if search field is empty
         if (itemSearchField.getText().isBlank()) {
             searchErrorMsg.setText("Please enter a name or code");
@@ -647,7 +647,7 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    void resetSearch() {
+    private void resetSearch() {
         //Clear the list
         viewedItems.clear();
         //Add all items to the observable list

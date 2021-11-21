@@ -1,0 +1,88 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class InventoryManagementApplication {
+Starting methods:
++ void start(Stage stage)
++ static void main(String[] args)
+}
+InventoryManagementApplication -- MainWindowController
+
+class Initializable {
+--
+Overrides
++ void Initialize()
+}
+
+class MainWindowController {
+Storage collections:
+# List<Item> allItems
+# ObservableList<Item> viewedItems
+# ArrayList<String> usedCodes
+---
+FXML Items:
+- TextField itemCodeField
+- TextField itemNameField
+- TextField itemSearchField
+- TextField itemValueField
+- Label searchErrorMsg
+- Label nameErrorMsg
+- Label codeErrorMsg
+- Label valueErrorMsg
+- Label selectErrorMsg
+- TableView<Item> itemTable
+- TableColumn<Item, String> nameColumn
+- TableColumn<Item, String> codeColumn
+- TableColumn<Item, Float> valueColumn
+---
+Methods:
+# ObservableList<Item> getViewedItemList()
+- void generateTSVFile(String filePath)
+- void generateHTMLFile(String filePath)
+- void generateJSONFile(String filePath)
+- void parseTSVFile(String filePath)
+- void parseHTMLFile(String filePath)
+- void parseJSONFile(String filePath)
+- boolean invalidateItemName(int nameLength)
+- boolean invalidateItemCode(String code)
+- boolean invalidateItemValue(String value)
+- void resetInformationFields()
+- int getIndexOfID(int id)
+- int getIndexOfCode(String code)
+---
+FXML Actions:
+- void initialize(URL url, ResourceBundle rb)
+- void saveFileAsTSV()
+- void saveFileAsHTML()
+- void saveFileAsJSON()
+- void uploadFileAsTSV()
+- void uploadFileAsHTML()
+- void uploadFileAsJSON()
+- void selectItemFromList()
+- void addItemToList()
+- void editItemFromList()
+- void deleteItemFromList()
+- void clearList()
+- searchForItem()
+- void resetSearch()
+}
+MainWindowController *-- Initializable
+MainWindowController -- Item
+
+class Item {
+- final int itemID
+- final SimpleStringProperty itemName
+- final SimpleStringProperty itemCode
+- final SimpleStringProperty itemValue
+---
+Constructors:
++ Item(String name, String code, String value)
++ Item(String name, String code, String value, int id)
+---
+Getter Methods:
++ String getItemName()
++ String getItemCode()
++ String getItemValue()
++ int getItemID()
+}
+@enduml
